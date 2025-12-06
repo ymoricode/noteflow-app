@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { NoteForm } from '@/components/notes/NoteForm'
 import { NoteCard } from '@/components/notes/NoteCard'
 import { Search, Archive } from 'lucide-react'
+import type { Note } from '@/types'
 
 export default function NotesPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -23,7 +24,7 @@ export default function NotesPage() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      return data || []
+      return (data || []) as Note[]
     },
   })
 

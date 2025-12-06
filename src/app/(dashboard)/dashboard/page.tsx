@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { formatRupiah } from '@/lib/utils'
 import { MonthlyExpenseChart } from '@/components/finances/MonthlyExpenseChart'
 import { YearlyExpenseChart } from '@/components/finances/YearlyExpenseChart'
+import type { Expense } from '@/types'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -38,17 +39,17 @@ export default async function DashboardPage() {
 
   const notesCount = notesResult.count || 0
   const habitsCount = habitsResult.count || 0
-  const allExpenses = allExpensesResult.data || []
+  const allExpenses = (allExpensesResult.data || []) as Expense[]
 
   // Calculate monthly expense
-  const monthlyExpense = expensesResult.data?.reduce((acc, curr) => {
+  const monthlyExpense = (expensesResult.data as Expense[] | null)?.reduce((acc, curr) => {
     if (curr.type === 'expense') {
       return acc + Number(curr.amount)
     }
     return acc
   }, 0) || 0
 
-  const monthlyIncome = expensesResult.data?.reduce((acc, curr) => {
+  const monthlyIncome = (expensesResult.data as Expense[] | null)?.reduce((acc, curr) => {
     if (curr.type === 'income') {
       return acc + Number(curr.amount)
     }

@@ -24,6 +24,7 @@ import {
 import { Plus } from 'lucide-react'
 import { Budget } from '@/types'
 import { format } from 'date-fns'
+import type { Database } from '@/types/database.types'
 
 const CATEGORIES = [
   'Makanan & Minuman',
@@ -40,6 +41,9 @@ interface BudgetFormProps {
   budget?: Budget
   onSuccess?: () => void
 }
+
+type BudgetInsert = Database['public']['Tables']['budgets']['Insert']
+type BudgetUpdate = Database['public']['Tables']['budgets']['Update']
 
 export function BudgetForm({ budget, onSuccess }: BudgetFormProps) {
   const [open, setOpen] = useState(false)
@@ -72,23 +76,33 @@ export function BudgetForm({ budget, onSuccess }: BudgetFormProps) {
       const monthDate = `${data.month}-01`
 
       if (budget) {
+        const updateData = { 
+          category: data.category, 
+          amount: data.amount, 
+          month: monthDate 
+        }
+        
+        // @ts-ignore - Supabase type inference issue
         const { data: result, error } = await supabase
           .from('budgets')
-          .update({ category: data.category, amount: data.amount, month: monthDate })
+          .update(updateData)
           .eq('id', budget.id)
           .select()
 
         if (error) throw error
         return result
       } else {
+        const insertData = {
+          user_id: user.id,
+          category: data.category,
+          amount: data.amount,
+          month: monthDate,
+        }
+        
+        // @ts-ignore - Supabase type inference issue
         const { data: result, error } = await supabase
           .from('budgets')
-          .insert({
-            user_id: user.id,
-            category: data.category,
-            amount: data.amount,
-            month: monthDate,
-          })
+          .insert(insertData)
           .select()
 
         if (error) throw error

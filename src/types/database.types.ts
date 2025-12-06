@@ -167,6 +167,35 @@ export interface Database {
           updated_at?: string
         }
       }
+      budgets: {
+        Row: {
+          id: string
+          user_id: string
+          category: string
+          amount: number
+          month: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          category: string
+          amount: number
+          month: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          category?: string
+          amount?: number
+          month?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       monthly_expense_summary: {

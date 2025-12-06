@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Plus } from 'lucide-react'
+import type { Database } from '@/types/database.types'
 
 const CATEGORIES_EXPENSE = [
   'Makanan & Minuman',
@@ -41,6 +42,8 @@ interface ExpenseFormProps {
   onSuccess?: () => void
 }
 
+type ExpenseInsert = Database['public']['Tables']['expenses']['Insert']
+
 export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
   const [open, setOpen] = useState(false)
   const [type, setType] = useState<'expense' | 'income'>('expense')
@@ -65,12 +68,15 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
       } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
+      const insertData = {
+        ...data,
+        user_id: user.id,
+      }
+
+      // @ts-ignore - Supabase type inference issue
       const { data: result, error } = await supabase
         .from('expenses')
-        .insert({
-          ...data,
-          user_id: user.id,
-        })
+        .insert(insertData)
         .select()
 
       if (error) throw error

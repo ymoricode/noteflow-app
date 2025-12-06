@@ -6,6 +6,7 @@ import { BudgetForm } from '@/components/finances/BudgetForm'
 import { BudgetCard } from '@/components/finances/BudgetCard'
 import { format } from 'date-fns'
 import { useState } from 'react'
+import type { Budget, Expense } from '@/types'
 
 export default function BudgetsPage() {
   const supabase = createClient()
@@ -22,7 +23,7 @@ export default function BudgetsPage() {
         .order('category')
 
       if (error) throw error
-      return data || []
+      return (data || []) as Budget[]
     },
   })
 
@@ -49,7 +50,7 @@ export default function BudgetsPage() {
       
       console.log('Expenses fetched:', data?.length || 0)
       
-      return data || []
+      return (data || []) as Expense[]
     },
   })
 

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { HabitForm } from '@/components/habits/HabitForm'
 import { HabitTracker } from '@/components/habits/HabitTracker'
+import type { Habit } from '@/types'
 
 export default function HabitsPage() {
   const supabase = createClient()
@@ -17,7 +18,7 @@ export default function HabitsPage() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      return data || []
+      return (data || []) as Habit[]
     },
   })
 
