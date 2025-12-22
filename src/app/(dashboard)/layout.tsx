@@ -6,9 +6,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import {
   LayoutDashboard,
-  FileText,
   DollarSign,
-  Target,
   Settings,
   LogOut,
   Menu,
@@ -16,16 +14,18 @@ import {
   Moon,
   Sun,
   Wallet,
+  PiggyBank,
+  FileBarChart,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/providers/ThemeProvider'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Catatan', href: '/notes', icon: FileText },
   { name: 'Keuangan', href: '/finances', icon: DollarSign },
   { name: 'Budget', href: '/budgets', icon: Wallet },
-  { name: 'Kebiasaan', href: '/habits', icon: Target },
+  { name: 'Target Tabungan', href: '/savings', icon: PiggyBank },
+  { name: 'Laporan', href: '/reports', icon: FileBarChart },
   { name: 'Pengaturan', href: '/settings', icon: Settings },
 ]
 
@@ -51,7 +51,7 @@ export default function DashboardLayout({
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-4 py-3 flex items-center justify-between">
         <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-          NoteFlow
+          FinanceFlow
         </h1>
         <Button
           variant="ghost"
@@ -74,7 +74,7 @@ export default function DashboardLayout({
           {/* Logo */}
           <div className="p-6 border-b dark:border-gray-700">
             <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              NoteFlow
+              FinanceFlow
             </h1>
           </div>
 

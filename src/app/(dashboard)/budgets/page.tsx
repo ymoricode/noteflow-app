@@ -38,8 +38,6 @@ export default function BudgetsPage() {
       const nextMonth = new Date(parseInt(year), parseInt(month), 1)
       const endDate = nextMonth.toISOString().split('T')[0]
       
-      console.log('Fetching expenses:', { startDate, endDate })
-      
       const { data, error } = await supabase
         .from('expenses')
         .select('*')
@@ -47,8 +45,6 @@ export default function BudgetsPage() {
         .lt('transaction_date', endDate)
 
       if (error) throw error
-      
-      console.log('Expenses fetched:', data?.length || 0)
       
       return (data || []) as Expense[]
     },

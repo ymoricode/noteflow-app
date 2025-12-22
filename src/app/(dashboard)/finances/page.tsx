@@ -29,7 +29,8 @@ export default function FinancesPage() {
   })
 
   const currentYear = new Date().getFullYear()
-  const years = [currentYear - 1, currentYear, currentYear + 1]
+  // Generate years from 2023 to current year + 5 (for future planning)
+  const years = Array.from({ length: currentYear - 2023 + 6 }, (_, i) => 2023 + i)
 
   if (isLoading) {
     return (
@@ -94,17 +95,19 @@ export default function FinancesPage() {
       {activeView === 'year' && (
         <div className="space-y-6">
           {/* Year Selector */}
-          <div className="flex gap-2">
-            {years.map((year) => (
-              <Button
-                key={year}
-                variant={selectedYear === year ? 'default' : 'outline'}
-                onClick={() => setSelectedYear(year)}
-                size="sm"
-              >
-                {year}
-              </Button>
-            ))}
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium dark:text-white">Pilih Tahun:</label>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+              className="px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:outline-none"
+            >
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
           </div>
 
           <YearlyExpenseChart expenses={expenses || []} year={selectedYear} />

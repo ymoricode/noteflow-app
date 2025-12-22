@@ -7,8 +7,8 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "NoteFlow - Dashboard Produktivitas",
-  description: "Kelola catatan, keuangan, kebiasaan, dan budget Anda",
+  title: "FinanceFlow - Kelola Keuangan Anda",
+  description: "Aplikasi manajemen keuangan: kelola transaksi, budget, tabungan, dan investasi Anda",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider>
           <QueryProvider>{children}</QueryProvider>
         </ThemeProvider>

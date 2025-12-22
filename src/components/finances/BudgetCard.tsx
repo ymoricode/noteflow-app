@@ -18,33 +18,14 @@ export function BudgetCard({ budget, expenses }: BudgetCardProps) {
   const supabase = createClient()
   const queryClient = useQueryClient()
 
-  // Debug: Log all expenses
-  console.log('=== BUDGET DEBUG ===')
-  console.log('Budget:', budget.category, budget.month.substring(0, 7))
-  console.log('All expenses:', expenses.length)
-  
   const spent = expenses
     .filter((exp) => {
       const expMonth = exp.transaction_date.substring(0, 7)
       const budgetMonth = budget.month.substring(0, 7)
       const match = exp.type === 'expense' && exp.category === budget.category && expMonth === budgetMonth
-      
-      // Debug each expense
-      console.log('Expense:', {
-        category: exp.category,
-        amount: exp.amount,
-        date: exp.transaction_date,
-        expMonth,
-        budgetMonth,
-        type: exp.type,
-        match
-      })
-      
       return match
     })
     .reduce((acc, exp) => acc + Number(exp.amount), 0)
-
-  console.log('Spent:', spent)
   
   const percentage = (spent / budget.amount) * 100
   const remaining = budget.amount - spent
