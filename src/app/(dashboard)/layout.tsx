@@ -16,6 +16,7 @@ import {
   Wallet,
   PiggyBank,
   FileBarChart,
+  Receipt,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/providers/ThemeProvider'
@@ -24,6 +25,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Keuangan', href: '/finances', icon: DollarSign },
   { name: 'Budget', href: '/budgets', icon: Wallet },
+  { name: 'Tagihan', href: '/bills', icon: Receipt },
   { name: 'Target Tabungan', href: '/savings', icon: PiggyBank },
   { name: 'Laporan', href: '/reports', icon: FileBarChart },
   { name: 'Pengaturan', href: '/settings', icon: Settings },

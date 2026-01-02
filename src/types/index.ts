@@ -46,3 +46,19 @@ export interface Category {
   type: 'income' | 'expense'
   created_at: string
 }
+
+export interface Bill {
+  id: string
+  user_id: string
+  name: string
+  amount: number
+  due_date: number // Day of month (1-31)
+  category: string
+  is_recurring: boolean
+  frequency: 'monthly' | 'yearly'
+  is_paid: boolean
+  last_paid_date: string | null
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
