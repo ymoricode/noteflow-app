@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/providers/ThemeProvider'
+import { MobileBottomNav } from '@/components/ui/mobile-bottom-nav'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -51,14 +52,15 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-4 py-3 flex items-center justify-between">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-4 py-3 flex items-center justify-between">
+        <h1 className="text-xl font-bold gradient-text">
           FinanceFlow
         </h1>
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="hover:bg-purple-100 dark:hover:bg-purple-900/20"
         >
           {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </Button>
@@ -75,7 +77,7 @@ export default function DashboardLayout({
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b dark:border-gray-700">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold gradient-text">
               FinanceFlow
             </h1>
           </div>
@@ -149,15 +151,19 @@ export default function DashboardLayout({
       {/* Mobile overlay */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden animate-fade-in"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
 
-      {/* Main content */}
-      <main className="lg:ml-64 pt-16 lg:pt-0">
-        <div className="p-6 lg:p-8">{children}</div>
+      {/* Main content - adjusted padding for mobile bottom nav */}
+      <main className="lg:ml-64 pt-16 lg:pt-0 pb-24 lg:pb-0">
+        <div className="p-4 sm:p-6 lg:p-8">{children}</div>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </div>
   )
 }
+

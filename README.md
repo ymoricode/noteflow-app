@@ -2,7 +2,7 @@
 
 > **Your All-in-One Productivity Dashboard**
 
-NoteFlow is a comprehensive productivity web application designed to help you manage your daily life in one beautiful and intuitive platform. With NoteFlow, you can take notes, track finances, plan budgets, manage savings goals, and build better habits - all in one place.
+NoteFlow is a comprehensive productivity web application designed to help you manage your daily life in one beautiful and intuitive platform. With NoteFlow, you can take notes, track finances, plan budgets, manage savings goals, track bills, and build better habits - all in one place.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
@@ -59,8 +59,13 @@ NoteFlow is a comprehensive productivity web application designed to help you ma
 - **Multi-View Visualizations**:
   - 📊 **Daily View**: Bar chart showing last 7 days
   - 📈 **Monthly View**: Cumulative line chart for current month
-  - 📉 **Yearly View**: Bar chart breakdown per month for selected year
+  - 📉 **Yearly View**: Bar chart breakdown per month for selected year with year filter dropdown
   - 🥧 **Category Pie Chart**: Visual breakdown by expense category
+
+- **Transaction History**:
+  - 📜 Complete transaction list with filtering
+  - 📅 Year filter dropdown to view transactions by year
+  - 🔍 Search and categorize transactions
 
 - **Summary Cards**:
   - 💳 Total Balance (Overall balance)
@@ -68,7 +73,20 @@ NoteFlow is a comprehensive productivity web application designed to help you ma
   - 📅 Yearly Expenses (This year's expenses)
   - ⚖️ Income vs Expense tracking
 
-### 💼 Budget Planning
+### 📄 Bills Management (NEW!)
+- 🧾 **Bill Tracking**: Add and manage recurring bills and subscriptions
+- 📅 **Due Date Tracking**: Set due dates (1-31) for each bill
+- 🔄 **Recurring Bills**: Support for monthly and yearly recurring bills
+- ✅ **Payment Status**: Mark bills as paid/unpaid
+- ⚠️ **Overdue Alerts**: Visual indicators for overdue bills
+- � **Bill Statistics**: 
+  - Total bills count
+  - Unpaid amount summary
+  - Paid amount summary
+  - Overdue bills count
+- 📂 **Categorization**: Organize bills by category (Internet, Electricity, Water, etc.)
+
+### �💼 Budget Planning
 - 🎯 **Budget per Category**: Set budget for each expense category
 - 📊 **Progress Tracking**: Monitor budget progress with visual progress bars
 - ⚠️ **Alert System**: Notifications when approaching or exceeding budget
@@ -139,6 +157,7 @@ noteflow-app/
 │   │   │   ├── 📂 login/           # Login page
 │   │   │   └── 📂 register/        # Registration page
 │   │   ├── 📂 (dashboard)/         # Protected dashboard pages
+│   │   │   ├── 📂 bills/           # Bills management (NEW!)
 │   │   │   ├── 📂 budgets/         # Budget planning
 │   │   │   ├── 📂 dashboard/       # Main dashboard
 │   │   │   ├── 📂 finances/        # Finance tracking
@@ -152,6 +171,9 @@ noteflow-app/
 │   │   ├── 📄 layout.tsx           # Root layout
 │   │   └── 📄 page.tsx             # Landing page
 │   ├── 📂 components/
+│   │   ├── 📂 bills/               # Bill components (NEW!)
+│   │   │   ├── 📄 BillCard.tsx     # Individual bill display
+│   │   │   └── 📄 BillForm.tsx     # Add/edit bill form
 │   │   ├── 📂 finances/            # Finance components
 │   │   │   ├── 📄 BudgetCard.tsx
 │   │   │   ├── 📄 BudgetForm.tsx
@@ -174,17 +196,20 @@ noteflow-app/
 │   │       ├── 📄 select.tsx
 │   │       └── 📄 textarea.tsx
 │   ├── 📂 lib/                     # Utility libraries
-│   │   └── 📄 supabase/            # Supabase client config
+│   │   ├── 📄 supabase/            # Supabase client config
+│   │   └── 📄 utils.ts             # Helper functions
 │   ├── 📂 providers/               # React context providers
 │   │   ├── 📄 QueryProvider.tsx    # TanStack Query provider
 │   │   └── 📄 ThemeProvider.tsx    # Theme provider
 │   └── 📂 types/                   # TypeScript type definitions
-│       └── 📄 database.types.ts    # Supabase generated types
+│       ├── 📄 database.types.ts    # Supabase generated types
+│       └── 📄 index.ts             # Custom type definitions
 ├── 📂 supabase/
 │   └── 📂 migrations/              # Database migrations
 │       ├── 📄 001_initial_schema.sql
 │       ├── 📄 002_budgets.sql
-│       └── 📄 003_new_finance_features.sql
+│       ├── 📄 003_new_finance_features.sql
+│       └── 📄 004_bills.sql        # Bills table (NEW!)
 ├── 📄 middleware.ts                # Route protection middleware
 ├── 📄 next.config.js               # Next.js configuration
 ├── 📄 tailwind.config.ts           # Tailwind configuration
@@ -236,6 +261,7 @@ pnpm install
    - `supabase/migrations/001_initial_schema.sql`
    - `supabase/migrations/002_budgets.sql`
    - `supabase/migrations/003_new_finance_features.sql`
+   - `supabase/migrations/004_bills.sql`
 
 ### **Step 5: Configure Environment Variables**
 
@@ -297,6 +323,29 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 └─────────────────┘                             │
         ▲                                       │
         └───────────────────────────────────────┘
+
+┌─────────────────┐       ┌─────────────────┐
+│ savings_goals   │       │      bills      │ (NEW!)
+├─────────────────┤       ├─────────────────┤
+│ id (PK)         │       │ id (PK)         │
+│ user_id (FK)    │───┐   │ user_id (FK)    │───┐
+│ name            │   │   │ name            │   │
+│ target_amount   │   │   │ amount          │   │
+│ current_amount  │   │   │ due_date (1-31) │   │
+│ target_date     │   │   │ category        │   │
+│ created_at      │   │   │ is_recurring    │   │
+│ updated_at      │   │   │ frequency       │   │
+└─────────────────┘   │   │ is_paid         │   │
+                      │   │ last_paid_date  │   │
+                      │   │ notes           │   │
+                      │   │ created_at      │   │
+                      │   │ updated_at      │   │
+                      │   └─────────────────┘   │
+                      │                         │
+                      └─────────────────────────┘
+                                │
+                                ▼
+                          auth.users
 ```
 
 ### **Tables Overview**
@@ -310,6 +359,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `habit_logs` | Daily habit completion logs |
 | `budgets` | Budget planning by category |
 | `savings_goals` | Savings goal tracking |
+| `bills` | Recurring bills & subscriptions (NEW!) |
 
 ---
 
@@ -356,6 +406,9 @@ npm start
 
 ### Budget Planning
 ![Budget](https://via.placeholder.com/800x400/1a1a2e/7c3aed?text=Budget+Planning)
+
+### Bills Management
+![Bills](https://via.placeholder.com/800x400/1a1a2e/7c3aed?text=Bills+Management)
 
 ### Savings Goals
 ![Savings](https://via.placeholder.com/800x400/1a1a2e/7c3aed?text=Savings+Goals)

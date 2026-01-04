@@ -58,23 +58,64 @@ export function YearlyExpenseChart({ expenses, year }: YearlyExpenseChartProps) 
 
   return (
     <div className="space-y-4">
-      {/* Summary Cards */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
-          <p className="text-sm text-red-600 dark:text-red-400 font-medium">Total Pengeluaran</p>
-          <p className="text-2xl font-bold text-red-700 dark:text-red-300">{formatRupiah(totalExpense)}</p>
+      {/* Summary Cards - Mobile Optimized */}
+      <div className="space-y-3">
+        {/* Saldo Bersih - Full Width Hero Card */}
+        <div className={`relative overflow-hidden p-5 rounded-2xl ${
+          totalNet >= 0 
+            ? 'bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700' 
+            : 'bg-gradient-to-br from-orange-500 via-orange-600 to-red-600'
+        }`}>
+          {/* Decorative elements */}
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+          <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-white/10 rounded-full blur-xl" />
+          
+          <div className="relative">
+            <p className="text-sm font-medium text-white/80 mb-1">Saldo Bersih</p>
+            <p className="text-3xl sm:text-4xl font-bold text-white">
+              {formatRupiah(totalNet)}
+            </p>
+            <div className={`mt-2 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
+              totalNet >= 0 
+                ? 'bg-green-400/20 text-green-100' 
+                : 'bg-red-400/20 text-red-100'
+            }`}>
+              {totalNet >= 0 ? '📈 Surplus' : '📉 Defisit'}
+            </div>
+          </div>
         </div>
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-          <p className="text-sm text-green-600 dark:text-green-400 font-medium">Total Pemasukan</p>
-          <p className="text-2xl font-bold text-green-700 dark:text-green-300">{formatRupiah(totalIncome)}</p>
-        </div>
-        <div className={`${totalNet >= 0 ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' : 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800'} p-4 rounded-lg border`}>
-          <p className={`text-sm font-medium ${totalNet >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`}>
-            Saldo Bersih
-          </p>
-          <p className={`text-2xl font-bold ${totalNet >= 0 ? 'text-blue-700 dark:text-blue-300' : 'text-orange-700 dark:text-orange-300'}`}>
-            {formatRupiah(totalNet)}
-          </p>
+
+        {/* Pemasukan & Pengeluaran - 2 Column Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          {/* Total Pengeluaran */}
+          <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200/50 dark:border-red-800/50">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center">
+                <span className="text-red-500 text-sm">📉</span>
+              </div>
+            </div>
+            <p className="text-xs font-medium text-red-600 dark:text-red-400 mb-1">
+              Total Pengeluaran
+            </p>
+            <p className="text-lg sm:text-xl font-bold text-red-700 dark:text-red-300 truncate">
+              {formatRupiah(totalExpense)}
+            </p>
+          </div>
+
+          {/* Total Pemasukan */}
+          <div className="p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200/50 dark:border-green-800/50">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+                <span className="text-green-500 text-sm">📈</span>
+              </div>
+            </div>
+            <p className="text-xs font-medium text-green-600 dark:text-green-400 mb-1">
+              Total Pemasukan
+            </p>
+            <p className="text-lg sm:text-xl font-bold text-green-700 dark:text-green-300 truncate">
+              {formatRupiah(totalIncome)}
+            </p>
+          </div>
         </div>
       </div>
 

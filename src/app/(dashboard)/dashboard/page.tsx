@@ -6,6 +6,9 @@ import { formatRupiah } from '@/lib/utils'
 import { MonthlyExpenseChart } from '@/components/finances/MonthlyExpenseChart'
 import { YearlyExpenseChart } from '@/components/finances/YearlyExpenseChart'
 import { CategoryPieChart } from '@/components/finances/CategoryPieChart'
+import { MobileHeader } from '@/components/ui/mobile-header'
+import { HeroBalanceCard } from '@/components/ui/hero-balance-card'
+import { QuickStats } from '@/components/ui/quick-stats'
 import type { Expense, Budget } from '@/types'
 
 export default async function DashboardPage() {
@@ -23,7 +26,7 @@ export default async function DashboardPage() {
   const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-01`
 
   // Fetch summary data (finance only)
-  const [expensesResult, allExpensesResult, budgetsResult] = await Promise.all([
+  const [expensesResult, allExpensesResult, budgetsResult, savingsResult] = await Promise.all([
     supabase
       .from('expenses')
       .select('amount, type, category')
@@ -36,6 +39,9 @@ export default async function DashboardPage() {
       .from('budgets')
       .select('*')
       .eq('month', currentMonth),
+    supabase
+      .from('savings_goals')
+      .select('*'),
   ])
 
   const allExpenses = (allExpensesResult.data || []) as Expense[]
@@ -62,6 +68,12 @@ export default async function DashboardPage() {
   const totalBudget = budgets.reduce((acc, b) => acc + Number(b.amount), 0)
   const budgetRemaining = totalBudget - monthlyExpense
 
+  // Calculate savings progress
+  const savingsGoals = savingsResult.data || []
+  const totalSavingsTarget = savingsGoals.reduce((acc: number, g: { target_amount: number }) => acc + Number(g.target_amount), 0)
+  const totalSavingsCollected = savingsGoals.reduce((acc: number, g: { current_amount: number }) => acc + Number(g.current_amount), 0)
+  const savingsProgress = totalSavingsTarget > 0 ? Math.round((totalSavingsCollected / totalSavingsTarget) * 100) : 0
+
   // Get top spending categories
   const categorySpending = (expensesResult.data as Expense[] | null)?.reduce((acc, curr) => {
     if (curr.type === 'expense') {
@@ -75,82 +87,98 @@ export default async function DashboardPage() {
     .slice(0, 3)
 
   return (
-    <div className="space-y-6 lg:space-y-8">
-      {/* Header - Responsive */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-          Selamat datang, {user.user_metadata?.full_name || 'User'}!
-        </h1>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1 sm:mt-2">
-          Ringkasan keuangan bulan ini
-        </p>
+    <div className="space-y-5 lg:space-y-8">
+      {/* Mobile Header with Greeting */}
+      <MobileHeader 
+        showGreeting={true} 
+        subtitle="Ringkasan keuangan bulan ini" 
+      />
+
+      {/* Hero Balance Card - Mobile */}
+      <div className="lg:hidden">
+        <HeroBalanceCard 
+          balance={balance}
+          income={monthlyIncome}
+          expense={monthlyExpense}
+        />
       </div>
 
-      {/* Stats Grid - 2 columns on mobile, 4 on desktop */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6 lg:grid-cols-4">
+      {/* Quick Stats - 2x2 Grid on Mobile */}
+      <div className="lg:hidden">
+        <QuickStats
+          income={monthlyIncome}
+          expense={monthlyExpense}
+          budgetRemaining={budgetRemaining}
+          totalBudget={totalBudget}
+          savingsProgress={savingsProgress}
+        />
+      </div>
+
+      {/* Desktop Stats Grid - Hidden on Mobile */}
+      <div className="hidden lg:grid grid-cols-4 gap-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2 p-3 sm:p-6">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
               Saldo
             </CardTitle>
-            <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 dark:text-green-400" />
+            <DollarSign className="h-4 w-4 text-green-600 dark:text-green-400" />
           </CardHeader>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
-            <div className={`text-lg sm:text-2xl font-bold ${balance >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+          <CardContent>
+            <div className={`text-2xl font-bold ${balance >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {formatRupiah(balance)}
             </div>
-            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Masuk: {formatRupiah(monthlyIncome)} | Keluar: {formatRupiah(monthlyExpense)}
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2 p-3 sm:p-6">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
               Pemasukan
             </CardTitle>
-            <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 dark:text-green-400" />
+            <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
           </CardHeader>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
-            <div className="text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400">
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
               {formatRupiah(monthlyIncome)}
             </div>
-            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Bulan ini
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2 p-3 sm:p-6">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
               Pengeluaran
             </CardTitle>
-            <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4 text-red-600 dark:text-red-400" />
+            <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
           </CardHeader>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
-            <div className="text-lg sm:text-2xl font-bold text-red-600 dark:text-red-400">
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600 dark:text-red-400">
               {formatRupiah(monthlyExpense)}
             </div>
-            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Bulan ini
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2 p-3 sm:p-6">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
               Budget
             </CardTitle>
-            <Wallet className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600 dark:text-purple-400" />
+            <Wallet className="h-4 w-4 text-purple-600 dark:text-purple-400" />
           </CardHeader>
-          <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
-            <div className={`text-lg sm:text-2xl font-bold ${budgetRemaining >= 0 ? 'text-purple-600 dark:text-purple-400' : 'text-red-600 dark:text-red-400'}`}>
+          <CardContent>
+            <div className={`text-2xl font-bold ${budgetRemaining >= 0 ? 'text-purple-600 dark:text-purple-400' : 'text-red-600 dark:text-red-400'}`}>
               {formatRupiah(budgetRemaining)}
             </div>
-            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Sisa dari {formatRupiah(totalBudget)}
             </p>
           </CardContent>
@@ -159,25 +187,27 @@ export default async function DashboardPage() {
 
       {/* Top Spending Categories Widget */}
       {topCategories.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="dark:text-white">🏷️ Top 3 Pengeluaran Terbesar</CardTitle>
+        <Card className="overflow-hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base sm:text-lg dark:text-white flex items-center gap-2">
+              🏷️ Top 3 Pengeluaran
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="pt-0">
+            <div className="space-y-3">
               {topCategories.map(([category, amount], index) => (
-                <div key={category} className="flex items-center justify-between">
+                <div key={category} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
                   <div className="flex items-center gap-3">
-                    <span className={`text-lg font-bold ${
-                      index === 0 ? 'text-yellow-500' : 
-                      index === 1 ? 'text-gray-400' : 
-                      'text-orange-400'
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                      index === 0 ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' : 
+                      index === 1 ? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' : 
+                      'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'
                     }`}>
-                      #{index + 1}
+                      {index + 1}
                     </span>
-                    <span className="font-medium dark:text-white capitalize">{category}</span>
+                    <span className="font-medium dark:text-white capitalize text-sm sm:text-base">{category}</span>
                   </div>
-                  <span className="text-red-600 dark:text-red-400 font-semibold">
+                  <span className="text-red-600 dark:text-red-400 font-semibold text-sm sm:text-base">
                     {formatRupiah(amount)}
                   </span>
                 </div>
@@ -189,7 +219,9 @@ export default async function DashboardPage() {
 
       {/* Charts Section */}
       <div className="space-y-4 sm:space-y-6">
-        <h2 className="text-xl sm:text-2xl font-semibold dark:text-white">Ringkasan Keuangan</h2>
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold dark:text-white">
+          📊 Ringkasan Keuangan
+        </h2>
         
         {/* Pie Chart and Monthly Chart Grid */}
         <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
@@ -203,8 +235,7 @@ export default async function DashboardPage() {
         {/* Yearly Chart */}
         <YearlyExpenseChart expenses={allExpenses} year={new Date().getFullYear()} />
       </div>
-
-
     </div>
   )
 }
+
