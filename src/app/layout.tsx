@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FinanceFlow - Kelola Keuangan Anda",
+  title: "My Finance - Kelola Keuangan Anda",
   description: "Aplikasi manajemen keuangan: kelola transaksi, budget, tabungan, dan investasi Anda",
 };
 

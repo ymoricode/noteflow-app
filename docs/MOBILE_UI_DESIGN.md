@@ -1,4 +1,4 @@
-# 📱 FinanceFlow Mobile UI Design System
+# 📱 My Finance Mobile UI Design System
 
 > High-Fidelity Mobile UI/UX Documentation for Android & iOS
 
@@ -20,7 +20,7 @@
 ## 🎯 App Overview
 
 ### Purpose
-FinanceFlow helps users track income & expenses, manage monthly budgets, track bills and subscriptions, set savings targets, and analyze financial reports.
+My Finance helps users track income & expenses, manage monthly budgets, track bills and subscriptions, set savings targets, and analyze financial reports.
 
 ### Target Users
 - Students

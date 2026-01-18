@@ -84,7 +84,7 @@ export default function RegisterPage() {
                 </div>
               </div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                FinanceFlow
+                My Finance
               </h1>
               <p className="text-gray-400 mt-2">Kelola Keuangan Anda</p>
             </div>

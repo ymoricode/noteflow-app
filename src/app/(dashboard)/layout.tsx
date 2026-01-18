@@ -54,7 +54,7 @@ export default function DashboardLayout({
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-4 py-3 flex items-center justify-between">
         <h1 className="text-xl font-bold gradient-text">
-          FinanceFlow
+          My Finance
         </h1>
         <Button
           variant="ghost"
@@ -78,7 +78,7 @@ export default function DashboardLayout({
           {/* Logo */}
           <div className="p-6 border-b dark:border-gray-700">
             <h1 className="text-2xl font-bold gradient-text">
-              FinanceFlow
+              My Finance
             </h1>
           </div>
 
