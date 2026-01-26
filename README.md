@@ -1,8 +1,8 @@
-# 🎯 NoteFlow
+# 🎯 MyFinance
 
-> **Your All-in-One Productivity Dashboard**
+> **Your All-in-One Personal Finance Dashboard**
 
-NoteFlow is a comprehensive productivity web application designed to help you manage your daily life in one beautiful and intuitive platform. With NoteFlow, you can take notes, track finances, plan budgets, manage savings goals, track bills, and build better habits - all in one place.
+MyFinance is a comprehensive personal finance web application designed to help you manage your financial life in one beautiful and intuitive platform. With MyFinance, you can track income & expenses, plan budgets, manage savings goals, and track bills - all in one place.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
@@ -11,7 +11,7 @@ NoteFlow is a comprehensive productivity web application designed to help you ma
 [![React Query](https://img.shields.io/badge/React_Query-5.x-ff4154?style=for-the-badge&logo=react-query)](https://tanstack.com/query)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-![NoteFlow Dashboard Preview](https://via.placeholder.com/1200x600/1a1a2e/7c3aed?text=NoteFlow+Dashboard)
+![MyFinance Dashboard Preview](https://via.placeholder.com/1200x600/1a1a2e/7c3aed?text=NoteFlow+Dashboard)
 
 ---
 
@@ -41,13 +41,12 @@ NoteFlow is a comprehensive productivity web application designed to help you ma
 | **Session Management** | Automatic session management with refresh tokens |
 | **Profile Management** | Update profile and change password easily |
 
-### 📝 Daily Notes System
-- ✅ **Full CRUD**: Create, Read, Update, Delete, and Archive notes
-- 🏷️ **Tag Organization**: Categorize notes using flexible tags
-- 🔍 **Search & Filter**: Search and filter notes by title, content, or tags
-- 🎨 **Masonry Grid Layout**: Beautiful and responsive visual display
-- 💾 **Real-time Sync**: Automatic synchronization with Supabase database
-- 📱 **Responsive Design**: Works perfectly on desktop, tablet, and mobile
+### � Mobile-First Design
+- 📲 **Mobile Bottom Navigation**: Easy-to-use bottom navigation bar for mobile
+- 🎯 **Mobile Header**: Clean and intuitive mobile header with quick access
+- 💳 **Hero Balance Card**: Beautiful balance display card on dashboard
+- � **Quick Stats**: At-a-glance financial statistics
+- � **Responsive Layout**: Seamlessly adapts between mobile and desktop
 
 ### 💰 Advanced Finance Tracking
 - **Transaction Management**: 
@@ -73,7 +72,7 @@ NoteFlow is a comprehensive productivity web application designed to help you ma
   - 📅 Yearly Expenses (This year's expenses)
   - ⚖️ Income vs Expense tracking
 
-### 📄 Bills Management (NEW!)
+### 📄 Bills Management
 - 🧾 **Bill Tracking**: Add and manage recurring bills and subscriptions
 - 📅 **Due Date Tracking**: Set due dates (1-31) for each bill
 - 🔄 **Recurring Bills**: Support for monthly and yearly recurring bills
@@ -97,13 +96,6 @@ NoteFlow is a comprehensive productivity web application designed to help you ma
 - 📊 **Progress Visualization**: Visual progress bars for each goal
 - 💰 **Contribution Tracking**: Add contributions towards your goals
 - 🎯 **Target Dates**: Set target dates for achieving goals
-
-### 🎯 Habit Tracker
-- ✅ **Habit Management**: Create and manage daily habits
-- 🎨 **Customization**: Choose colors and icons for each habit
-- 📅 **Daily Tracking**: Mark habits as completed/not completed each day
-- 📊 **Visual Progress**: View habit progress with clear visualizations
-- 💾 **Persistent Storage**: All data stored securely in Supabase
 
 ### 📊 Reports & Analytics
 - 📈 **Financial Reports**: Comprehensive financial analytics
@@ -157,7 +149,7 @@ noteflow-app/
 │   │   │   ├── 📂 login/           # Login page
 │   │   │   └── 📂 register/        # Registration page
 │   │   ├── 📂 (dashboard)/         # Protected dashboard pages
-│   │   │   ├── 📂 bills/           # Bills management (NEW!)
+│   │   │   ├── 📂 bills/           # Bills management
 │   │   │   ├── 📂 budgets/         # Budget planning
 │   │   │   ├── 📂 dashboard/       # Main dashboard
 │   │   │   ├── 📂 finances/        # Finance tracking
@@ -171,7 +163,7 @@ noteflow-app/
 │   │   ├── 📄 layout.tsx           # Root layout
 │   │   └── 📄 page.tsx             # Landing page
 │   ├── 📂 components/
-│   │   ├── 📂 bills/               # Bill components (NEW!)
+│   │   ├── 📂 bills/               # Bill components
 │   │   │   ├── 📄 BillCard.tsx     # Individual bill display
 │   │   │   └── 📄 BillForm.tsx     # Add/edit bill form
 │   │   ├── 📂 finances/            # Finance components
@@ -191,8 +183,12 @@ noteflow-app/
 │   │       ├── 📄 button.tsx
 │   │       ├── 📄 card.tsx
 │   │       ├── 📄 dialog.tsx
+│   │       ├── 📄 hero-balance-card.tsx  # Dashboard balance display
 │   │       ├── 📄 input.tsx
 │   │       ├── 📄 label.tsx
+│   │       ├── 📄 mobile-bottom-nav.tsx  # Mobile navigation
+│   │       ├── 📄 mobile-header.tsx      # Mobile header
+│   │       ├── 📄 quick-stats.tsx        # Financial quick stats
 │   │       ├── 📄 select.tsx
 │   │       └── 📄 textarea.tsx
 │   ├── 📂 lib/                     # Utility libraries
@@ -204,12 +200,7 @@ noteflow-app/
 │   └── 📂 types/                   # TypeScript type definitions
 │       ├── 📄 database.types.ts    # Supabase generated types
 │       └── 📄 index.ts             # Custom type definitions
-├── 📂 supabase/
-│   └── 📂 migrations/              # Database migrations
-│       ├── 📄 001_initial_schema.sql
-│       ├── 📄 002_budgets.sql
-│       ├── 📄 003_new_finance_features.sql
-│       └── 📄 004_bills.sql        # Bills table (NEW!)
+├── 📂 docs/                        # Documentation files
 ├── 📄 middleware.ts                # Route protection middleware
 ├── 📄 next.config.js               # Next.js configuration
 ├── 📄 tailwind.config.ts           # Tailwind configuration
@@ -254,14 +245,15 @@ pnpm install
 2. Click **New Project**
 3. Fill in project details and wait for setup
 
-### **Step 4: Run Database Migrations**
+### **Step 4: Setup Database Schema**
 
 1. Open **SQL Editor** in Supabase Dashboard
-2. Run migrations in order:
-   - `supabase/migrations/001_initial_schema.sql`
-   - `supabase/migrations/002_budgets.sql`
-   - `supabase/migrations/003_new_finance_features.sql`
-   - `supabase/migrations/004_bills.sql`
+2. Create the required tables for:
+   - `profiles` - User profile information
+   - `expenses` - Income & expense transactions
+   - `budgets` - Budget planning by category
+   - `savings_goals` - Savings goal tracking
+   - `bills` - Recurring bills & subscriptions
 
 ### **Step 5: Configure Environment Variables**
 
@@ -290,18 +282,18 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ```
 ┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
-│     profiles    │       │      notes      │       │    expenses     │
+│     profiles    │       │    expenses     │       │     budgets     │
 ├─────────────────┤       ├─────────────────┤       ├─────────────────┤
 │ id (PK, FK)     │──┐    │ id (PK)         │       │ id (PK)         │
 │ email           │  │    │ user_id (FK)    │───┐   │ user_id (FK)    │───┐
-│ full_name       │  │    │ title           │   │   │ amount          │   │
-│ avatar_url      │  │    │ content         │   │   │ type            │   │
-│ created_at      │  │    │ tags[]          │   │   │ category        │   │
-│ updated_at      │  │    │ is_archived     │   │   │ note            │   │
-└─────────────────┘  │    │ created_at      │   │   │ transaction_date│   │
-                     │    │ updated_at      │   │   │ created_at      │   │
-                     │    └─────────────────┘   │   │ updated_at      │   │
-                     │                          │   └─────────────────┘   │
+│ full_name       │  │    │ amount          │   │   │ category        │   │
+│ avatar_url      │  │    │ type            │   │   │ amount          │   │
+│ created_at      │  │    │ category        │   │   │ period          │   │
+│ updated_at      │  │    │ note            │   │   │ created_at      │   │
+└─────────────────┘  │    │ transaction_date│   │   │ updated_at      │   │
+                     │    │ created_at      │   │   └─────────────────┘   │
+                     │    │ updated_at      │   │                         │
+                     │    └─────────────────┘   │                         │
                      │                          │                         │
                      ▼                          ▼                         ▼
               ┌──────────────────────────────────────────────────────────────┐
@@ -309,43 +301,23 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
               └──────────────────────────────────────────────────────────────┘
                      ▲                          ▲                         ▲
                      │                          │                         │
-┌─────────────────┐  │    ┌─────────────────┐   │   ┌─────────────────┐   │
-│     habits      │  │    │   habit_logs    │   │   │     budgets     │   │
-├─────────────────┤  │    ├─────────────────┤   │   ├─────────────────┤   │
-│ id (PK)         │──┘    │ id (PK)         │───┘   │ id (PK)         │───┘
-│ user_id (FK)    │───────│ user_id (FK)    │       │ user_id (FK)    │
-│ name            │       │ habit_id (FK)   │───┐   │ category        │
-│ description     │       │ completed       │   │   │ amount          │
-│ color           │       │ log_date        │   │   │ period          │
-│ icon            │       │ created_at      │   │   │ created_at      │
-│ created_at      │◄──────│ updated_at      │   │   │ updated_at      │
-│ updated_at      │       └─────────────────┘   │   └─────────────────┘
-└─────────────────┘                             │
-        ▲                                       │
-        └───────────────────────────────────────┘
-
-┌─────────────────┐       ┌─────────────────┐
-│ savings_goals   │       │      bills      │ (NEW!)
-├─────────────────┤       ├─────────────────┤
-│ id (PK)         │       │ id (PK)         │
-│ user_id (FK)    │───┐   │ user_id (FK)    │───┐
-│ name            │   │   │ name            │   │
-│ target_amount   │   │   │ amount          │   │
-│ current_amount  │   │   │ due_date (1-31) │   │
-│ target_date     │   │   │ category        │   │
-│ created_at      │   │   │ is_recurring    │   │
-│ updated_at      │   │   │ frequency       │   │
-└─────────────────┘   │   │ is_paid         │   │
-                      │   │ last_paid_date  │   │
-                      │   │ notes           │   │
-                      │   │ created_at      │   │
-                      │   │ updated_at      │   │
-                      │   └─────────────────┘   │
-                      │                         │
-                      └─────────────────────────┘
-                                │
-                                ▼
-                          auth.users
+┌─────────────────┐  │                          │   ┌─────────────────┐   │
+│ savings_goals   │  │                          │   │      bills      │   │
+├─────────────────┤  │                          │   ├─────────────────┤   │
+│ id (PK)         │──┘                          │   │ id (PK)         │───┘
+│ user_id (FK)    │─────────────────────────────┘   │ user_id (FK)    │
+│ name            │                                 │ name            │
+│ target_amount   │                                 │ amount          │
+│ current_amount  │                                 │ due_date (1-31) │
+│ target_date     │                                 │ category        │
+│ created_at      │                                 │ is_recurring    │
+│ updated_at      │                                 │ frequency       │
+└─────────────────┘                                 │ is_paid         │
+                                                    │ last_paid_date  │
+                                                    │ notes           │
+                                                    │ created_at      │
+                                                    │ updated_at      │
+                                                    └─────────────────┘
 ```
 
 ### **Tables Overview**
@@ -353,13 +325,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | Table | Description |
 |-------|-------------|
 | `profiles` | User profile information |
-| `notes` | Daily notes with tags |
 | `expenses` | Income & expense transactions |
-| `habits` | Habit definitions |
-| `habit_logs` | Daily habit completion logs |
 | `budgets` | Budget planning by category |
 | `savings_goals` | Savings goal tracking |
-| `bills` | Recurring bills & subscriptions (NEW!) |
+| `bills` | Recurring bills & subscriptions |
 
 ---
 
@@ -447,6 +416,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Made with ❤️ by ymoricode
 
-© 2025 ymoricode. All rights reserved.
+© 2026 ymoricode. All rights reserved.
 
 </div>
