@@ -9,7 +9,8 @@ import { CategoryPieChart } from '@/components/finances/CategoryPieChart'
 import { MobileHeader } from '@/components/ui/mobile-header'
 import { HeroBalanceCard } from '@/components/ui/hero-balance-card'
 import { QuickStats } from '@/components/ui/quick-stats'
-import type { Expense, Budget } from '@/types'
+import { DashboardWidgets } from '@/components/dashboard/DashboardWidgets'
+import type { Expense, Budget, Bill } from '@/types'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -26,7 +27,8 @@ export default async function DashboardPage() {
   const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-01`
 
   // Fetch summary data (finance only)
-  const [expensesResult, allExpensesResult, budgetsResult, savingsResult] = await Promise.all([
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [expensesResult, allExpensesResult, budgetsResult, savingsResult, billsResult] = await Promise.all([
     supabase
       .from('expenses')
       .select('amount, type, category')
@@ -42,10 +44,15 @@ export default async function DashboardPage() {
     supabase
       .from('savings_goals')
       .select('*'),
+    supabase
+      .from('bills' as any)
+      .select('*')
+      .order('due_date', { ascending: true }),
   ])
 
   const allExpenses = (allExpensesResult.data || []) as Expense[]
   const budgets = (budgetsResult.data || []) as Budget[]
+  const allBills = (billsResult.data || []) as Bill[]
 
   // Calculate monthly expense
   const monthlyExpense = (expensesResult.data as Expense[] | null)?.reduce((acc, curr) => {
@@ -216,6 +223,9 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Dashboard Widgets - Calendar, Month Comparison, Bill Reminders */}
+      <DashboardWidgets expenses={allExpenses} bills={allBills} />
 
       {/* Charts Section */}
       <div className="space-y-4 sm:space-y-6">
