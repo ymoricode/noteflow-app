@@ -1,6 +1,6 @@
 'use client'
 
-import { TrendingUp, TrendingDown, Wallet, Target } from 'lucide-react'
+import { TrendingUp, TrendingDown, Wallet, Target, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { formatRupiah } from '@/lib/utils'
 
 interface QuickStatsProps {
@@ -9,6 +9,8 @@ interface QuickStatsProps {
   budgetRemaining: number
   totalBudget?: number
   savingsProgress?: number
+  incomeChange?: number
+  expenseChange?: number
 }
 
 export function QuickStats({ 
@@ -16,7 +18,9 @@ export function QuickStats({
   expense, 
   budgetRemaining, 
   totalBudget = 0,
-  savingsProgress = 0 
+  savingsProgress = 0,
+  incomeChange = 0,
+  expenseChange = 0 
 }: QuickStatsProps) {
   const budgetUsagePercent = totalBudget > 0 
     ? Math.round(((totalBudget - budgetRemaining) / totalBudget) * 100) 
@@ -26,10 +30,20 @@ export function QuickStats({
     <div className="grid grid-cols-2 gap-3">
       {/* Card 1 - Pemasukan */}
       <div className="p-4 rounded-2xl bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20 dark:border-green-500/10">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center justify-between mb-2">
           <div className="w-8 h-8 rounded-xl bg-green-500/20 flex items-center justify-center">
             <TrendingUp className="w-4 h-4 text-green-500" />
           </div>
+          {incomeChange !== 0 && (
+            <span className={`inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+              incomeChange > 0 
+                ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
+                : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+            }`}>
+              {incomeChange > 0 ? <ArrowUpRight className="h-2.5 w-2.5" /> : <ArrowDownRight className="h-2.5 w-2.5" />}
+              {Math.abs(incomeChange).toFixed(1)}%
+            </span>
+          )}
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">
           Pemasukan
@@ -41,10 +55,20 @@ export function QuickStats({
 
       {/* Card 2 - Pengeluaran */}
       <div className="p-4 rounded-2xl bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/20 dark:border-red-500/10">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center justify-between mb-2">
           <div className="w-8 h-8 rounded-xl bg-red-500/20 flex items-center justify-center">
             <TrendingDown className="w-4 h-4 text-red-500" />
           </div>
+          {expenseChange !== 0 && (
+            <span className={`inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+              expenseChange > 0 
+                ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' 
+                : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+            }`}>
+              {expenseChange > 0 ? <ArrowUpRight className="h-2.5 w-2.5" /> : <ArrowDownRight className="h-2.5 w-2.5" />}
+              {Math.abs(expenseChange).toFixed(1)}%
+            </span>
+          )}
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">
           Pengeluaran

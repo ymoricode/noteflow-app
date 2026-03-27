@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DollarSign, TrendingUp, TrendingDown, Wallet } from 'lucide-react'
+import { DollarSign, TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { formatRupiah } from '@/lib/utils'
 import { MonthlyExpenseChart } from '@/components/finances/MonthlyExpenseChart'
@@ -26,13 +26,25 @@ export default async function DashboardPage() {
   // Get current month in YYYY-MM-01 format
   const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-01`
 
+  // Previous month date range
+  const now = new Date()
+  const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  const prevMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0) // last day of prev month
+  const prevMonthStartStr = prevMonthStart.toISOString().split('T')[0]
+  const prevMonthEndStr = prevMonthEnd.toISOString().split('T')[0]
+
   // Fetch summary data (finance only)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [expensesResult, allExpensesResult, budgetsResult, savingsResult, billsResult] = await Promise.all([
+  const [expensesResult, prevMonthResult, allExpensesResult, budgetsResult, savingsResult, billsResult] = await Promise.all([
     supabase
       .from('expenses')
       .select('amount, type, category')
-      .gte('transaction_date', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]),
+      .gte('transaction_date', new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]),
+    supabase
+      .from('expenses')
+      .select('amount, type')
+      .gte('transaction_date', prevMonthStartStr)
+      .lte('transaction_date', prevMonthEndStr),
     supabase
       .from('expenses')
       .select('*')
@@ -70,6 +82,25 @@ export default async function DashboardPage() {
   }, 0) || 0
 
   const balance = monthlyIncome - monthlyExpense
+
+  // Calculate previous month totals for percentage change
+  const prevMonthIncome = (prevMonthResult.data as Expense[] | null)?.reduce((acc, curr) => {
+    if (curr.type === 'income') return acc + Number(curr.amount)
+    return acc
+  }, 0) || 0
+
+  const prevMonthExpense = (prevMonthResult.data as Expense[] | null)?.reduce((acc, curr) => {
+    if (curr.type === 'expense') return acc + Number(curr.amount)
+    return acc
+  }, 0) || 0
+
+  // Percentage changes
+  const incomeChange = prevMonthIncome > 0 
+    ? ((monthlyIncome - prevMonthIncome) / prevMonthIncome) * 100 
+    : (monthlyIncome > 0 ? 100 : 0)
+  const expenseChange = prevMonthExpense > 0 
+    ? ((monthlyExpense - prevMonthExpense) / prevMonthExpense) * 100 
+    : (monthlyExpense > 0 ? 100 : 0)
 
   // Calculate total budget and spent
   const totalBudget = budgets.reduce((acc, b) => acc + Number(b.amount), 0)
@@ -118,6 +149,8 @@ export default async function DashboardPage() {
           budgetRemaining={budgetRemaining}
           totalBudget={totalBudget}
           savingsProgress={savingsProgress}
+          incomeChange={incomeChange}
+          expenseChange={expenseChange}
         />
       </div>
 
@@ -151,9 +184,21 @@ export default async function DashboardPage() {
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
               {formatRupiah(monthlyIncome)}
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Bulan ini
-            </p>
+            <div className="flex items-center gap-1.5 mt-1">
+              {incomeChange !== 0 ? (
+                <span className={`inline-flex items-center gap-0.5 text-xs font-medium px-1.5 py-0.5 rounded-full ${
+                  incomeChange > 0 
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
+                    : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                }`}>
+                  {incomeChange > 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                  {Math.abs(incomeChange).toFixed(1)}%
+                </span>
+              ) : (
+                <span className="text-xs text-gray-400">-</span>
+              )}
+              <span className="text-xs text-gray-500 dark:text-gray-400">vs bulan lalu</span>
+            </div>
           </CardContent>
         </Card>
 
@@ -168,9 +213,21 @@ export default async function DashboardPage() {
             <div className="text-2xl font-bold text-red-600 dark:text-red-400">
               {formatRupiah(monthlyExpense)}
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Bulan ini
-            </p>
+            <div className="flex items-center gap-1.5 mt-1">
+              {expenseChange !== 0 ? (
+                <span className={`inline-flex items-center gap-0.5 text-xs font-medium px-1.5 py-0.5 rounded-full ${
+                  expenseChange > 0 
+                    ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' 
+                    : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                }`}>
+                  {expenseChange > 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                  {Math.abs(expenseChange).toFixed(1)}%
+                </span>
+              ) : (
+                <span className="text-xs text-gray-400">-</span>
+              )}
+              <span className="text-xs text-gray-500 dark:text-gray-400">vs bulan lalu</span>
+            </div>
           </CardContent>
         </Card>
 

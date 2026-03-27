@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react'
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Minus, Calendar } from 'lucide-react'
 import { formatRupiah } from '@/lib/utils'
 import type { Expense } from '@/types'
 
@@ -10,16 +10,40 @@ interface MonthComparisonProps {
   expenses: Expense[]
 }
 
-export function MonthComparison({ expenses }: MonthComparisonProps) {
-  const comparison = useMemo(() => {
-    const now = new Date()
-    const thisMonth = now.getMonth()
-    const thisYear = now.getFullYear()
-    
-    // Prev month
-    const prevMonth = thisMonth === 0 ? 11 : thisMonth - 1
-    const prevYear = thisMonth === 0 ? thisYear - 1 : thisYear
+const MONTH_NAMES_FULL = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+]
 
+const MONTH_NAMES_SHORT = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+  'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'
+]
+
+export function MonthComparison({ expenses }: MonthComparisonProps) {
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth() // 0-indexed
+
+  // State for selected month and year (the "current" month to compare)
+  const [selectedYear, setSelectedYear] = useState(currentYear)
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth) // 0-indexed
+
+  // Generate years from expenses data
+  const years = useMemo(() => {
+    const yearSet = new Set<number>()
+    yearSet.add(currentYear)
+    expenses.forEach(exp => {
+      yearSet.add(new Date(exp.transaction_date).getFullYear())
+    })
+    return Array.from(yearSet).sort((a, b) => b - a)
+  }, [expenses, currentYear])
+
+  // Previous month calculation
+  const prevMonth = selectedMonth === 0 ? 11 : selectedMonth - 1
+  const prevYear = selectedMonth === 0 ? selectedYear - 1 : selectedYear
+
+  const comparison = useMemo(() => {
     let thisIncome = 0, thisExpense = 0
     let prevIncome = 0, prevExpense = 0
 
@@ -29,7 +53,7 @@ export function MonthComparison({ expenses }: MonthComparisonProps) {
       const y = d.getFullYear()
       const amount = Number(exp.amount)
 
-      if (m === thisMonth && y === thisYear) {
+      if (m === selectedMonth && y === selectedYear) {
         if (exp.type === 'income') thisIncome += amount
         else thisExpense += amount
       } else if (m === prevMonth && y === prevYear) {
@@ -48,21 +72,12 @@ export function MonthComparison({ expenses }: MonthComparisonProps) {
       incomeChange, expenseChange,
       balanceThis, balancePrev,
     }
-  }, [expenses])
+  }, [expenses, selectedMonth, selectedYear, prevMonth, prevYear])
 
-  const MONTH_NAMES = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-    'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'
-  ]
-
-  const now = new Date()
-  const thisMonthName = MONTH_NAMES[now.getMonth()]
-  const prevMonthIdx = now.getMonth() === 0 ? 11 : now.getMonth() - 1
-  const prevMonthName = MONTH_NAMES[prevMonthIdx]
+  const thisMonthName = MONTH_NAMES_SHORT[selectedMonth]
+  const prevMonthName = MONTH_NAMES_SHORT[prevMonth]
 
   const ChangeIndicator = ({ value, inverted = false }: { value: number; inverted?: boolean }) => {
-    // For expenses, an increase is bad (red) and decrease is good (green)
-    // For income, an increase is good (green) and decrease is bad (red)
     const isPositive = value > 0
     const isGood = inverted ? !isPositive : isPositive
     
@@ -90,9 +105,46 @@ export function MonthComparison({ expenses }: MonthComparisonProps) {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-3">
-        <CardTitle className="text-base sm:text-lg dark:text-white flex items-center gap-2">
-          📊 Perbandingan {prevMonthName} vs {thisMonthName}
-        </CardTitle>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <CardTitle className="text-base sm:text-lg dark:text-white flex items-center gap-2">
+            📊 Perbandingan Bulanan
+          </CardTitle>
+        </div>
+        {/* Filters */}
+        <div className="flex items-center gap-2 mt-2 flex-wrap">
+          <div className="flex items-center gap-1.5">
+            <Calendar className="h-3.5 w-3.5 text-gray-400" />
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(Number(e.target.value))}
+              className="px-2 py-1 text-xs border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:outline-none"
+            >
+              {MONTH_NAMES_FULL.map((month, idx) => (
+                <option key={idx} value={idx}>{month}</option>
+              ))}
+            </select>
+          </div>
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(Number(e.target.value))}
+            className="px-2 py-1 text-xs border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:outline-none"
+          >
+            {years.map(year => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+          {(selectedMonth !== currentMonth || selectedYear !== currentYear) && (
+            <button
+              onClick={() => { setSelectedMonth(currentMonth); setSelectedYear(currentYear) }}
+              className="text-[10px] text-purple-500 hover:text-purple-600 dark:hover:text-purple-400 font-medium"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {prevMonthName} {prevYear} vs {thisMonthName} {selectedYear}
+        </p>
       </CardHeader>
       <CardContent className="pt-0 space-y-3">
         {/* Income Comparison */}
@@ -106,15 +158,14 @@ export function MonthComparison({ expenses }: MonthComparisonProps) {
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{prevMonthName}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{prevMonthName} {prevYear}</p>
               <p className="text-sm font-bold text-gray-700 dark:text-gray-200">{formatRupiah(comparison.prevIncome)}</p>
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{thisMonthName}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{thisMonthName} {selectedYear}</p>
               <p className="text-sm font-bold text-green-600 dark:text-green-400">{formatRupiah(comparison.thisIncome)}</p>
             </div>
           </div>
-          {/* Progress Bar */}
           <div className="mt-2 h-1.5 bg-green-200 dark:bg-green-900/50 rounded-full overflow-hidden">
             <div 
               className="h-full bg-green-500 rounded-full transition-all duration-500"
@@ -134,15 +185,14 @@ export function MonthComparison({ expenses }: MonthComparisonProps) {
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{prevMonthName}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{prevMonthName} {prevYear}</p>
               <p className="text-sm font-bold text-gray-700 dark:text-gray-200">{formatRupiah(comparison.prevExpense)}</p>
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{thisMonthName}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{thisMonthName} {selectedYear}</p>
               <p className="text-sm font-bold text-red-600 dark:text-red-400">{formatRupiah(comparison.thisExpense)}</p>
             </div>
           </div>
-          {/* Progress Bar */}
           <div className="mt-2 h-1.5 bg-red-200 dark:bg-red-900/50 rounded-full overflow-hidden">
             <div 
               className="h-full bg-red-500 rounded-full transition-all duration-500"
@@ -158,13 +208,13 @@ export function MonthComparison({ expenses }: MonthComparisonProps) {
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{prevMonthName}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{prevMonthName} {prevYear}</p>
               <p className={`text-sm font-bold ${comparison.balancePrev >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                 {formatRupiah(comparison.balancePrev)}
               </p>
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{thisMonthName}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">{thisMonthName} {selectedYear}</p>
               <p className={`text-sm font-bold ${comparison.balanceThis >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                 {formatRupiah(comparison.balanceThis)}
               </p>
