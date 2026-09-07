@@ -77,9 +77,8 @@ export function MonthComparison({ expenses }: MonthComparisonProps) {
   const thisMonthName = MONTH_NAMES_SHORT[selectedMonth]
   const prevMonthName = MONTH_NAMES_SHORT[prevMonth]
 
-  const ChangeIndicator = ({ value, inverted = false }: { value: number; inverted?: boolean }) => {
+  const ChangeIndicator = ({ value }: { value: number }) => {
     const isPositive = value > 0
-    const isGood = inverted ? !isPositive : isPositive
     
     if (Math.abs(value) < 0.5) {
       return (
@@ -91,7 +90,7 @@ export function MonthComparison({ expenses }: MonthComparisonProps) {
     }
 
     return (
-      <span className={`flex items-center gap-0.5 text-xs font-medium ${isGood ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+      <span className={`flex items-center gap-0.5 text-xs font-medium ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
         {isPositive ? (
           <ArrowUpRight className="h-3 w-3" />
         ) : (
@@ -181,7 +180,7 @@ export function MonthComparison({ expenses }: MonthComparisonProps) {
               <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
               <span className="text-sm font-medium text-red-700 dark:text-red-300">Pengeluaran</span>
             </div>
-            <ChangeIndicator value={comparison.expenseChange} inverted />
+            <ChangeIndicator value={comparison.expenseChange} />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>

@@ -4,6 +4,7 @@ import { DollarSign, TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRi
 import { redirect } from 'next/navigation'
 import { formatRupiah } from '@/lib/utils'
 import { MonthlyExpenseChart } from '@/components/finances/MonthlyExpenseChart'
+import { YearlyExpenseChart } from '@/components/finances/YearlyExpenseChart'
 import { CategoryPieChart } from '@/components/finances/CategoryPieChart'
 import { MobileHeader } from '@/components/ui/mobile-header'
 import { HeroBalanceCard } from '@/components/ui/hero-balance-card'
@@ -223,8 +224,8 @@ export default async function DashboardPage() {
               {expenseChange !== 0 ? (
                 <span className={`inline-flex items-center gap-0.5 text-xs font-medium px-1.5 py-0.5 rounded-full ${
                   expenseChange > 0
-                    ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                    : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                    : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                 }`}>
                   {expenseChange > 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
                   {Math.abs(expenseChange).toFixed(1)}%
@@ -298,6 +299,9 @@ export default async function DashboardPage() {
 
       {/* Monthly Chart */}
       <MonthlyExpenseChart expenses={allExpenses} />
+
+      {/* Yearly Chart with Rincian Bulanan - 2026 and Detail Bulanan */}
+      <YearlyExpenseChart expenses={allExpenses} year={new Date().getFullYear()} />
 
       {/* Recent Transactions */}
       <RecentTransactions expenses={allExpenses} wallets={wallets} />
