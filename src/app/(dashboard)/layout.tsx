@@ -17,6 +17,7 @@ import {
   PiggyBank,
   FileBarChart,
   Receipt,
+  PieChart,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/providers/ThemeProvider'
@@ -25,7 +26,8 @@ import { MobileBottomNav } from '@/components/ui/mobile-bottom-nav'
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Keuangan', href: '/finances', icon: DollarSign },
-  { name: 'Budget', href: '/budgets', icon: Wallet },
+  { name: 'Wallet', href: '/wallets', icon: Wallet },
+  { name: 'Budget', href: '/budgets', icon: PieChart },
   { name: 'Tagihan', href: '/bills', icon: Receipt },
   { name: 'Target Tabungan', href: '/savings', icon: PiggyBank },
   { name: 'Laporan', href: '/reports', icon: FileBarChart },

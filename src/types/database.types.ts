@@ -80,6 +80,7 @@ export interface Database {
           category: string
           note: string | null
           transaction_date: string
+          wallet_id: string | null
           created_at: string
           updated_at: string
         }
@@ -91,6 +92,7 @@ export interface Database {
           category: string
           note?: string | null
           transaction_date?: string
+          wallet_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -102,6 +104,7 @@ export interface Database {
           category?: string
           note?: string | null
           transaction_date?: string
+          wallet_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -192,6 +195,44 @@ export interface Database {
           category?: string
           amount?: number
           month?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      wallets: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          type: 'bank' | 'e-wallet' | 'cash' | 'other'
+          initial_balance: number
+          icon: string | null
+          color: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          type: 'bank' | 'e-wallet' | 'cash' | 'other'
+          initial_balance?: number
+          icon?: string | null
+          color?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          type?: 'bank' | 'e-wallet' | 'cash' | 'other'
+          initial_balance?: number
+          icon?: string | null
+          color?: string | null
+          is_active?: boolean
           created_at?: string
           updated_at?: string
         }

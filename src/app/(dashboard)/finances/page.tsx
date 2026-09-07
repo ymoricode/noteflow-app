@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
-import { ExpenseForm } from '@/components/finances/ExpenseForm'
+import { TransactionForm } from '@/components/finances/TransactionForm'
 import { YearlyExpenseChart } from '@/components/finances/YearlyExpenseChart'
 import { MonthlyExpenseChart } from '@/components/finances/MonthlyExpenseChart'
 import { DailyExpenseChart } from '@/components/finances/DailyExpenseChart'
@@ -51,7 +51,7 @@ export default function FinancesPage() {
           <h1 className="text-3xl font-bold dark:text-white">Keuangan</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">Kelola pemasukan dan pengeluaran Anda</p>
         </div>
-        <ExpenseForm />
+        <TransactionForm />
       </div>
 
       {/* View Selector */}
